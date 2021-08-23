@@ -1,7 +1,15 @@
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Controller, Get, Param, UseInterceptors } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { TransformInterceptor } from '@common/interceptors';
 
 import { ComptrollerService } from './comptroller.service';
+import { ExceptionResponseDto } from '@common/dto';
+import { ResponseComptrollerDto } from './dto';
 
 @Controller({
   version: '1',
@@ -11,7 +19,11 @@ import { ComptrollerService } from './comptroller.service';
 export class ComptrollerController {
   constructor(private readonly comptrollerService: ComptrollerService) {}
 
-  @Get('query/:cedula')
+  @Get(':cedula')
+  @UseInterceptors(new TransformInterceptor(ResponseComptrollerDto))
+  @ApiOkResponse({ type: ResponseComptrollerDto })
+  @ApiNotFoundResponse({ type: ExceptionResponseDto })
+  @ApiBadRequestResponse({ type: ExceptionResponseDto })
   getData(@Param('cedula') cedula: number) {
     return this.comptrollerService.getData(cedula);
   }
