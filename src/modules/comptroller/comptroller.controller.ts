@@ -1,7 +1,6 @@
 import { Controller, Get, Param, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { EnvelopInterceptor } from '@common/interceptors';
 import { ComptrollerService } from './comptroller.service';
 
 @Controller({
@@ -9,7 +8,6 @@ import { ComptrollerService } from './comptroller.service';
   path: 'comptroller',
 })
 @ApiTags('Comptroller')
-@UseInterceptors(EnvelopInterceptor)
 export class ComptrollerController {
   constructor(private readonly comptrollerService: ComptrollerService) {}
 

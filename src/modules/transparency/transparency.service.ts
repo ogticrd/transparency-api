@@ -1,38 +1,39 @@
-import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import jwt_decode from 'jwt-decode';
 
-import { Token } from './entities';
 import { QueryTransparencyDto } from './dto';
+import { Token } from './entities';
 
 @Injectable()
 export class TransparencyService {
   constructor(
-    private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
     @InjectRepository(Token)
     private readonly tokenRepo: Repository<Token>,
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
   ) {}
 
   async getData(params: QueryTransparencyDto) {
     const token = await this.getActiveToken();
+    const authorization = 'Bearer ' + token;
     let date = this.getLastPayrollDate();
 
     if (params.date) {
       date = this.formatDate(params.date);
     }
 
-    delete params.date;
-
     return new Promise((res, rej) => {
+      delete params.date;
+
       this.httpService
         .get('/api/empleados/' + date, {
           params: {
             nombre: params.name,
-            apellido: params.lastname,
+            apellido: params.lastName,
             genero: params.gender,
             institucion: params.institution,
             cargo: params.position,
@@ -41,15 +42,29 @@ export class TransparencyService {
             page: params.page,
           },
           headers: {
-            authorization: 'Bearer ' + token,
+            authorization,
           },
         })
         .subscribe({
-          next: async ({ data }) => {
-            return res(data.data);
+          next: ({ data: { data, meta } }) => {
+            const response = {
+              valid: true,
+              data,
+              meta: {
+                total: meta.total,
+                currentPage: meta.current_page,
+                lastPage: meta.last_page,
+              },
+            };
+
+            return res(response);
           },
           error: (err) => {
-            throw new BadRequestException(err.message);
+            const status = (err.response && err.response.status) || 500;
+
+            rej(
+              new HttpException({ valid: false, message: err.message }, status),
+            );
           },
         });
     });
@@ -62,19 +77,22 @@ export class TransparencyService {
       this.httpService
         .post('/api/login', null, { params: { email } })
         .subscribe({
-          next: async ({ data }) => {
+          next: ({ data }) => {
             if (data.success) {
               return res(data.success.token);
             }
           },
           error: (err) => {
-            throw new BadRequestException(err.message);
+            throw new BadRequestException({
+              valid: false,
+              message: err.message,
+            });
           },
         });
     });
   }
 
-  private async saveToken(token: string) {
+  private async saveToken(token: string): Promise<void> {
     const expirationDate = this.getTokenExpirationDate(token);
 
     const createdToken = this.tokenRepo.create({
@@ -86,7 +104,7 @@ export class TransparencyService {
     await this.tokenRepo.save(createdToken);
   }
 
-  private async getActiveToken() {
+  private async getActiveToken(): Promise<string> {
     const { token, expirationDate } = await this.tokenRepo.findOne({
       where: { isActive: true },
       order: { id: 'DESC' },
@@ -102,7 +120,7 @@ export class TransparencyService {
     return token;
   }
 
-  private getTokenExpirationDate(token: string) {
+  private getTokenExpirationDate(token: string): Date {
     var decoded: any = jwt_decode(token);
 
     const date = new Date(0);
@@ -111,7 +129,7 @@ export class TransparencyService {
     return date;
   }
 
-  private formatDate(date: Date) {
+  private formatDate(date: Date): string {
     return (
       date.getFullYear().toString() +
       (date.getMonth() < 10
@@ -121,7 +139,7 @@ export class TransparencyService {
     );
   }
 
-  private getLastPayrollDate() {
+  private getLastPayrollDate(): string {
     const currentDate = new Date();
 
     return (
