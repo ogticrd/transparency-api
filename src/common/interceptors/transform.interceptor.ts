@@ -23,6 +23,7 @@ export class TransformInterceptor<T> implements NestInterceptor<Partial<T>, T> {
     return next.handle().pipe(
       map((data: T) => {
         const response = plainToClass(this.classType, data);
+        response['valid'] = true;
 
         if (!this.isValidTransformation(response) || data['statusCode']) {
           return data;

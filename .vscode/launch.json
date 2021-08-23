@@ -6,6 +6,7 @@
             "request": "launch",
             "name": "API",
             "runtimeArgs": [
+                "--nolazy",
                 "-r",
                 "ts-node/register",
                 "-r",
@@ -14,7 +15,20 @@
             "args": [
                 "${workspaceFolder}/src/main.ts"
             ],
-            "autoAttachChildProcesses": true
+            "autoAttachChildProcesses": true,
+        },
+        {
+            "name": "Debug Jest Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "${workspaceRoot}/node_modules/.bin/jest",
+                "--runInBand",
+                "--coverage",
+                "false"
+            ],
+            "console": "integratedTerminal"
         }
     ]
 }
