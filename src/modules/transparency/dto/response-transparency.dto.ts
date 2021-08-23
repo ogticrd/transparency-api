@@ -9,11 +9,11 @@ export class ResponseTransparencyDto {
 
   @IsString()
   @Expose({ name: 'NOMBRES' })
-  names: string;
+  name: string;
 
   @IsString()
   @Expose({ name: 'APELLIDOS' })
-  lastnames: string;
+  lastName: string;
 
   @IsString()
   @Expose({ name: 'INSTITUCION' })
@@ -29,7 +29,7 @@ export class ResponseTransparencyDto {
 
   @IsString()
   @Expose({ name: 'GENERO' })
-  genre: string;
+  gender: string;
 
   @IsString()
   @Expose({ name: 'TIPO_EMPLEADO' })

@@ -58,7 +58,7 @@ export class QueryTransparencyDto {
   @IsOptional()
   @IsString()
   @ApiProperty({ required: false })
-  lastname: string;
+  lastName: string;
 
   @IsOptional()
   @IsString()
