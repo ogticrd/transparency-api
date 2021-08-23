@@ -16,11 +16,6 @@
                 "${workspaceFolder}/src/main.ts"
             ],
             "autoAttachChildProcesses": true,
-            "sourceMaps": true,
-            "envFile": "${workspaceFolder}/.env",
-            "cwd": "${workspaceRoot}",
-            "console": "integratedTerminal",
-            "protocol": "inspector"
         },
         {
             "name": "Debug Jest Tests",
