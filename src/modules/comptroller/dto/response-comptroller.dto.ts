@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
 import { IsBoolean } from 'class-validator';
 
-class ResponseController {
+class ResponseConptroller {
   cedula: string;
   name: string;
   employer: string;
@@ -19,7 +19,7 @@ export class ResponseComptrollerDto {
   valid: boolean;
 
   @Expose()
-  @Type(() => ResponseController)
-  @ApiProperty({ type: ResponseController })
-  data: ResponseController;
+  @Type(() => ResponseConptroller)
+  @ApiProperty({ type: ResponseConptroller })
+  data: ResponseConptroller;
 }
