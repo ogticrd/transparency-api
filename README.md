@@ -12,7 +12,6 @@
   - [Stack de desarrollo](#stack-de-desarrollo)
     - [Servidor](#servidor)
     - [Base de datos](#base-de-datos)
-  - [Descargo de responsabilidad](#descargo-de-responsabilidad)
   - [Autores](#autores)
 
 ## Descripción y contexto
