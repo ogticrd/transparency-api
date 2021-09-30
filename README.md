@@ -1,4 +1,4 @@
-# Servicio transparencia de empleados públicos ⛽️
+# Servicio transparencia de empleados públicos
 
 [![Prod Deployment](https://github.com/opticrd/transparency-api/actions/workflows/prod-cd.yml/badge.svg)](https://github.com/opticrd/transparency-api/actions/workflows/prod-cd.yml)
 
